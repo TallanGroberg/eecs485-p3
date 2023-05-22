@@ -1,0 +1,114 @@
+.logo {
+    position: inherit;
+    top: 0;
+    left: 0;
+}
+
+.title {
+    position: inherit;
+    display: inline-block;
+    padding: 4px;
+    font: 20px/1.5em "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.header {
+    position: fixed;
+    z-index: 1;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    border-bottom: 1px solid black;
+    width: 100%;
+    top: 0;
+    margin: 0;
+    height: 50px;
+}
+.left-info {
+    display: flex;
+    margin-left: auto;
+    flex-direction: row;
+    order: 2;
+}
+
+.user {
+
+    right: 56px;
+    padding: 1%;
+}
+
+.v-bar {
+
+    right: 56px;
+    top: 5px;
+    width: 2px;
+    height: inherit;
+    border-left: 1px solid black;
+    margin-left: 4px;
+    margin-right: 4px;
+    
+}
+
+.explore {
+
+    right: 4px;
+    top: 15px;
+    
+}
+
+.posts {
+    position: absolute;
+    left: 25%;
+    right: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.posts .post {
+    border: 1px solid black;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.creator {
+    display: flex;
+    padding: 4px;
+}
+
+.post-img {
+    width: 100vw;
+    height: auto;
+    object-fit: cover;
+}
+.creator-image {
+    padding: 4px;
+    width: 10%;
+    height: auto;
+}
+
+.time-stamp {
+    margin-left: auto;
+    order: 2;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    order: 1;
+}
+
+.user-photos {
+    display: flex;
+    flex-direction: row;
+}
+
+.user-info img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    padding: 4px;
+}

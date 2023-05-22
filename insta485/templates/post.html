@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% for post in posts %}
+        User_file: {{ post.user_filename }} <br>
+        postid: {{ post.postid }} <br>
+        owner: {{ post.owner }} <br>
+        filename: {{ post.filename }} <br>
+        timestamp: {{ post.created}} <br>
+        likes: {{ post.likes }} <br>
+        comments: <br>
+    {% endfor %}
+
+        {% for comment in comments %}
+            comment_owner_filename: {{ comment.user_filename }} <br>
+            comment_owner: {{ comment.owner }} <br>
+            comment_text: {{ comment.text }} <br>
+        <br>
+        {% endfor %}
+</body>
+</html>

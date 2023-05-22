@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <title>{% block title %}{% endblock %}</title>
+  <!-- <link href="/insta485/templates/css/style.css" rel="stylesheet" type="text/css"> -->
+<body>
+  <div class="header">
+    <a href="/">
+        <!-- <img alt=" logo " class="logo" src="/insta485/templates/images/logo.png"    width="50" height="50"> -->
+    </a>
+    <h1>
+      <a href="/" rel="home">
+          <img src="" width="100" height="100" alt="Insta485">
+      </a>
+    </h1>
+
+    <div class="left-info">
+
+        <a class="explore" href="/explore/">
+            <h4 >explore</h4>
+        </a>
+        
+        <span class="v-bar"></span>
+        <a class="user" href="/accounts/logout">
+            <h4> logout </h4> 
+        </a>
+    </div>
+</div>
+
+  {% block context %}
+  
+  {% endblock %}
+</body>
+</html>

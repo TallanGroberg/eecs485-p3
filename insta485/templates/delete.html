@@ -1,0 +1,10 @@
+
+{% extends "account.html" %}
+
+{% block context %} 
+<!-- DO NOT CHANGE THIS -->
+<form action="<FIXME_ACCOUNTS_URL_HERE>?target=<FIXME_ACCOUNTS_CREATE_HERE>" method="post" enctype="multipart/form-data">
+    <input type="submit" name="delete" value="confirm delete account"/>
+    <input type="hidden" name="operation" value="delete"/>
+  </form>
+{% endblock %}

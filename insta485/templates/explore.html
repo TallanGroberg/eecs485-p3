@@ -1,0 +1,20 @@
+<!-- explore.html -->
+{% extends "account.html" %}
+
+{% block context %}
+    {% for user in users %}
+        <div class="user-card">
+            {% for post in posts%}
+            <a href="/users/{{post.owner}}/"><img src="{{post.owner_img_url}}" alt="{{post.owner}}" width="60" height="60" alt="userpic"></a>
+            <img src="{{post.owner_img_url}}" alt="User Icon">
+            {% endfor %}
+            
+            <a href="/users/{{user.username}}/">{{user.username}}</a>
+            <form action="/following/{{ user.username }}/?target=/explore/" method="post" enctype="multipart/form-data">
+                <input type="submit" name="follow" value="Follow">
+                <input type="hidden" name="username" value="{{ user.username }}">
+                <input type="hidden" name="operation" value="follow">
+            </form>
+        </div>
+    {% endfor %}
+{% endblock %}

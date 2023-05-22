@@ -1,0 +1,10 @@
+{% extends "account.html" %}
+
+{% block context %} 
+<!-- DO NOT CHANGE THIS (aside from where we say 'FIXME') -->
+<form action="/posts/?target=/users/{{username}}" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept="image/*" required/>
+    <input type="submit" name="create_post" value="upload new post"/>
+    <input type="hidden" name="operation" value="create"/>
+  </form>
+  {% endblock %}

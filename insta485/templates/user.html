@@ -1,0 +1,48 @@
+{% extends "account.html" %}
+
+{% block context %} 
+
+<h1>
+    {{ username }}
+</h1>
+
+    {% if username == session['username'] %}
+    <a href="/accounts/{{ username }}/edit">Edit Profile</a>
+
+    {% else %}
+
+        {% if username not in following %}
+        <form action="/users/{{ username }}/followers/" method="post">
+            <input type="submit" name="follow" value="Follow"/>
+        </form>
+        {% else %}
+        <form action="/accounts/{{ username }}/unfollow/?target=/users/{{username}}" method="post">
+            <input type="submit" name="unfollow" value="Unfollow"/>
+        </form>
+        {% endif %}
+
+    {% endif %}
+
+    <p>{{ datas['posts_count'] }} posts</p>
+    <p>{{ datas['followers_count'] }} followers</p>
+    <p>{{ datas['following_count'] }} following</p>
+
+    {% if username == session['username'] %}
+    <form action="/posts/?target=/users/{{username}}" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required/>
+        <input type="submit" name="create_post" value="upload new post"/>
+        <input type="hidden" name="operation" value="create"/>
+      </form>
+
+      {% endif %}
+
+    {% for post in posts %}
+    <div class="post">
+        <a href="/posts/{{ post['postid'] }}">
+            <img src="/uploads/{{post.filename}}" alt=" a post from {{username}}">
+        </a>
+    </div>
+    {% endfor %}
+
+{% endblock %}
+

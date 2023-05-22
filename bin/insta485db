@@ -1,0 +1,40 @@
+#!/bin/bash
+# add this line to your command line so that you can run this script with db instead of ./bin/insta485db
+# alias db="./bin/insta485db"
+# ./bin/insta485db create becomes db create
+# way more simple!!!
+
+set -Eeuo pipefail
+set -x
+
+# Create the database.
+usage() {
+  echo "Usage: $0 (create|destroy|reset|dump)"
+}
+
+if [ $# -ne 1 ]; then
+  usage
+  exit 1
+fi
+
+
+if [ "$1" = "create" ]; then
+    mkdir -p var/uploads
+    sqlite3 var/insta485.sqlite3 < sql/schema.sql
+    sqlite3 var/insta485.sqlite3 < sql/data.sql
+    cp sql/uploads/* var/uploads/
+elif [ "$1" = "destroy" ]; then
+    rm -rf var/insta485.sqlite3 var/uploads
+elif [ "$1" = "reset" ]; then
+    rm -rf var/insta485.sqlite3 var/uploads
+    mkdir -p var/uploads
+    sqlite3 var/insta485.sqlite3 < sql/schema.sql
+    sqlite3 var/insta485.sqlite3 < sql/data.sql
+    cp sql/uploads/* var/uploads/
+elif [ "$1" = "dump" ]; then
+    sqlite3 var/insta485.sqlite3 .dump
+elif [ "$1" = "shell" ]; then
+    sqlite3 var/insta485.sqlite3
+else
+    echo "Invalid command. Please use './insta485db (create|destroy|reset|dump)'."
+fi
