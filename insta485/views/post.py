@@ -11,7 +11,7 @@ import pathlib
 import uuid
 
 
-@insta485.app.route('/posts/<int:postid>/')
+@insta485.app.route('/api/v1/posts/<int:postid>/')
 def show_post(postid):
     """Display /post the post route."""
     # Connect to the database
@@ -57,6 +57,7 @@ def show_post(postid):
                "comments": comments
                }
     # print(post[0]['user_filename'])
+
 
     return flask.render_template("post.html", **context)
 

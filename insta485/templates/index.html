@@ -1,49 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<body>
-  <span class="v-bar"></span>
-  <a class="user" href="/accounts/logout">
-      <h4> logout </h4> 
-  </a>
-  <h1>Users</h1>
-  {% for user in users %}
-  <p>{{user.username}} {{user.fullname}}</p>
-  {% endfor %}
-  # // gets info from context, which gets info from database
-  //create another flask route to upload images, send from dictionary 
-  //action //url_for
-
-  <h1><a href="/" rel="home"><img src="" width = "100" height = "100" alt="Insta485"></a></h1>        
-        <h1><a href="/explore/" rel="explore">explore</a></h1>
-        <h1><a href="/users/{{logname}}/" rel="{{logname}}"> {{logname}}</a></h1>
-        {% for post in posts %}
-        <div class="post">
-          <a href="/users/{{post.owner}}/"><img src="{{post.owner_img_url}}" alt="{{post.owner}}" width="60" height="60" alt="userpic"></a>
-          <img src="{{post.img_url}}" alt="postpic" width="200" height="200">
-          <p class="timestamp"><a href="/posts/{{post.postid}}/" rel="# post"> {{post.timestamp}} </a></p>
-          <div class='comments'> <p>{{post.likes_count}} {{ "like" if post.likes_count == 1 else "likes" }}</p><br>
-            {% for comment in post.comments %}
-            <a href="/users/{{ comment.owner }}/">{{ comment.owner }}</a> {{ comment.text }} <br>
-            {% endfor %}
-            <form action="/posts/{{post.postid}}/like" method="post" enctype="multipart/form-data">
-              <input type="hidden" name="postid" value="{{ post.postid }}"/>
-              {% if post.is_liked %}
-                <input type="hidden" name="operation" value="unlike"/>
-                <input type="submit" name="like" value="unlike"/>
-              {% else %}
-                <input type="hidden" name="operation" value="like"/>
-                <input type="submit" name="like" value="like"/>
-              {% endif %}
-            </form>
-            <form action="/comments/" method="post" enctype="multipart/form-data">
-              <input type="hidden" name="operation" value="create"/>
-              <input type="hidden" name="postid" value="{{post.postid}}"/>
-              <input type="text" name="text" required/>
-              <input type="submit" name="comment" value="comment"/>
-            </form>
-          </div>
-        {% endfor %}
-        
-        </div>
-</body>
+  
+  <body>
+    <!-- Plain old HTML and jinja2 nav bar goes here -->
+  
+  
+    <div id="reactEntry">
+      Loading ...
+    </div>
+    <!-- Load JavaScript -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bundle.js') }}"></script>
+  </body>
+  
+  
 </html>
