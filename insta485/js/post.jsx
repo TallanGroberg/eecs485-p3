@@ -8,13 +8,13 @@ export default function Post({ url }) {
 
   const [imgUrl, setImgUrl] = useState("");
   const [owner, setOwner] = useState("");
-
+  let image = '';
   useEffect(() => {
     // Declare a boolean flag that we can use to cancel the API request.
     let ignoreStaleRequest = false;
 
     // Call REST API to get the post's information
-    fetch(url, { credentials: "same-origin" })
+    fetch(url)
       .then((response) => {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
@@ -23,9 +23,10 @@ export default function Post({ url }) {
         // If ignoreStaleRequest was set to true, we want to ignore the results of the
         // the request. Otherwise, update the state to trigger a new render.
         if (!ignoreStaleRequest) {
-        //   setImgUrl(data.imgUrl);
-          console.log(data)
-        //   setOwner(data.owner);
+          setImgUrl(data.imgUrl);
+          console.log(imgUrl);
+          setOwner(data.owner);
+          console.log(owner);
         }
       })
       .catch((error) => console.error(error));
@@ -41,9 +42,9 @@ export default function Post({ url }) {
   // Render post image and post owner
   return (
     <div className="post">
-        hello world
-      {/* <img src={imgUrl} alt="post_image" /> */}
-      {/* <p>{owner}</p> */}
+      <img src={imgUrl} alt="post_image" />
+      <p>{imgUrl}</p>
+      <p>{owner}</p>
     </div>
   );
 }

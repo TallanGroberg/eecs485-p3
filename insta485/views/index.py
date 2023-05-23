@@ -11,6 +11,7 @@ import insta485
 @insta485.app.route('/')
 def show_index():
     """Display / route."""
-    context = {}
+    context = {"posts": "test"}
+
     return flask.render_template("index.html", **context)
 

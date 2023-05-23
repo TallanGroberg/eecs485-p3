@@ -8,20 +8,15 @@
 </head>
 <body>
     {% for post in posts %}
-        User_file: {{ post.user_filename }} <br>
-        postid: {{ post.postid }} <br>
+        created: {{ post.created}} <br>
+        imgUrl: {{ post.imgUrl }} <br>
         owner: {{ post.owner }} <br>
-        filename: {{ post.filename }} <br>
-        timestamp: {{ post.created}} <br>
-        likes: {{ post.likes }} <br>
-        comments: <br>
+        ownerImgUrl: {{ post.ownerImgUrl }} <br>
+        ownerShowUrl: {{ post.ownerShowUrl}} <br>
+        postShowUrl: {{ post.postShowUrl }} <br>
+        url: {{ post.url }} <br>
+         <br>
     {% endfor %}
 
-        {% for comment in comments %}
-            comment_owner_filename: {{ comment.user_filename }} <br>
-            comment_owner: {{ comment.owner }} <br>
-            comment_text: {{ comment.text }} <br>
-        <br>
-        {% endfor %}
 </body>
 </html>

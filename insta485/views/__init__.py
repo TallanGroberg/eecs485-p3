@@ -9,3 +9,4 @@ from insta485.views.accounts.edit import show_edit
 from insta485.views.accounts.password import show_password, edit_password
 from insta485.views.accounts.delete import show_delete
 from insta485.views.post import show_post, handle_file
+from insta485.views.image import download_file

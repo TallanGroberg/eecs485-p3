@@ -5,7 +5,7 @@ URLs include:
 /post/*
 """
 import flask
-from flask import request, redirect, session
+from flask import request, redirect, session, jsonify
 import insta485
 import pathlib
 import uuid
@@ -17,14 +17,22 @@ def show_post(postid):
     # Connect to the database
     connection = insta485.model.get_db()
 
+    print("made it!!!")
     cur = connection.execute(
-        "SELECT posts.postid, posts.owner, posts.filename, posts.created "
+        "SELECT posts.postid, posts.owner, posts.filename AS imgUrl, posts.created "
         "FROM posts "
         "WHERE posts.postid = ?",
         (postid,)
     )
 
+
+
+
     post = cur.fetchall()
+    post[0]['imgUrl'] = "/uploads/" + post[0]['imgUrl'] 
+    post[0]['postShowUrl'] = '/posts/' + str(postid) + '/'
+    post[0]['url'] = '/api/v1/posts/' + str(postid) + '/'
+
 
     cur2 = connection.execute(
         "SELECT comments.postid, comments.owner, "
@@ -35,31 +43,19 @@ def show_post(postid):
     )
 
     cur3 = connection.execute(
-        "SELECT filename "
+        "SELECT username, filename AS ownerImgUrl "
         "FROM users "
         "WHERE users.username = ?",
         (post[0]['owner'],)
     )
+    user = cur3.fetchall()
+    post[0]['ownerImgUrl'] = "/uploads/" + user[0]['ownerImgUrl']
+    post[0]['ownerShowUrl'] = "/users/" + user[0]['username'] +  "/"
 
-    comments = cur2.fetchall()
-    post[0]['user_filename'] = cur3.fetchone()['filename']
-
-    cur4 = connection.execute(
-        "SELECT filename "
-        "FROM users "
-        "WHERE users.username = ?",
-        (comments[0]['owner'],)
-    )
-    comments[0]['user_filename'] = cur4.fetchall()
-    print(comments[0]['user_filename'])
     # Add database info to context
-    context = {"posts": post,
-               "comments": comments
-               }
-    # print(post[0]['user_filename'])
 
-
-    return flask.render_template("post.html", **context)
+    print("json ",jsonify(post[0]).data)
+    return jsonify(post[0])
 
 
 @insta485.app.route('/posts/', methods=['POST', 'GET'])
