@@ -17,13 +17,13 @@ def show_explore():
     cur = connection.execute(
         "SELECT username, filename "
         "FROM users "
-        "WHERE username NOT IN (SELECT username2 FROM following WHERE username1 = ?) AND username != ?",
+        "WHERE username NOT IN "
+        "(SELECT username2 FROM following WHERE username1 = ?) AND username != ? ",
         (flask.session['username'], flask.session['username'])
     )
-    
+
     users = cur.fetchall()
     print(users)
-
     # Add database info to context
     context = { "users": users }
 

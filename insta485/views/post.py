@@ -19,7 +19,8 @@ def show_post(postid):
 
     print("made it!!!")
     cur = connection.execute(
-        "SELECT posts.postid, posts.owner, posts.filename AS imgUrl, posts.created "
+        "SELECT posts.postid, posts.owner, posts.filename "
+        "AS imgUrl, posts.created "
         "FROM posts "
         "WHERE posts.postid = ?",
         (postid,)
