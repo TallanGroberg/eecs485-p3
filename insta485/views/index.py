@@ -14,4 +14,3 @@ def show_index():
     context = {"posts": "test"}
 
     return flask.render_template("index.html", **context)
-
