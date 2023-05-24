@@ -56,7 +56,7 @@ def get_resources():
   #   }
   # ],
   # "url": "/api/v1/posts/"
-  
+
 # still need user authentication 
 def query_database_post(user_log):
     "Query database for postid/url"
@@ -84,11 +84,12 @@ def get_post(postid_url_slug):
     user_log = flask.session['username']
     # Retrieve the 10 posts from func
     posts = query_database_post(user_log)
-   
+    limited_posts = posts[:10]
+
     results = [
         {"postid": posts[0], 
          "url": f"/api/v1/posts/{post[0]}/"}
-       for post in posts
+       for post in limited_posts
      ]
     response = {
         "next": "",
