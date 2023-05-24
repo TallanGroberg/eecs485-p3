@@ -43,6 +43,11 @@ def get_resources():
 #     }
 #     return flask.jsonify(**context)
 
+@insta485.app.route('/posts/<int:postid>/', methods=['GET'])
+def show_post(postid):
+    post = get_1_post(postid)
+    return flask.render_template("post.html", **post)
+
 
 @insta485.app.route('/api/v1/posts/')
 def get_posts():
