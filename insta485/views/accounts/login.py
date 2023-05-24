@@ -1,6 +1,7 @@
 """Login page for the photo sharing app."""
 import flask
 from flask import request, redirect, session, make_response
+import base64
 import insta485
 from insta485.views.accounts.check_password import check_password
 
@@ -16,9 +17,11 @@ def show_login():
 
 def do_the_login():
     """Handle the login process."""
+
     username = request.form.get('username')
     password = request.form.get('password')
     print(username, password)
+
 
     connection = insta485.model.get_db()
 
@@ -41,6 +44,15 @@ def do_the_login():
 
     # Redirect to the desired page after successful login
     target = request.args.get('target')
+    auth = {"Authorization": "Basic {}".format(base64.b64encode("{}:{}".format(session['username'], password).encode('utf-8')).decode('utf-8'))}
+
+    request.authorization = {"Athorization": auth }
+
+
+    if request.authorization is None:
+        print("Invalid username or password.")
+        return flask.render_template("login.html", error="Invalid username or password."), 401
+        
     return redirect(target or '/')
 
 
@@ -60,3 +72,9 @@ def do_logout():
     response.set_cookie('username', '')
 
     return redirect('/accounts/login/')
+
+def check_login():
+    """Check if the user is logged in."""
+    if request.authorization is None:
+        return flask.redirect(flask.url_for('show_login'))
+    return None

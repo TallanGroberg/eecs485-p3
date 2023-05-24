@@ -14,4 +14,4 @@ def show_index():
     if 'username' not in flask.session:
         return flask.redirect(flask.url_for('show_login'))
 
-    return flask.render_template("index.html", **context)
+    return flask.render_template("index.html")
