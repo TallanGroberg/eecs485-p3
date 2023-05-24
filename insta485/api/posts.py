@@ -39,31 +39,13 @@ def get_resources():
 #     }
 #     return flask.jsonify(**context)
 
-
- # "next": "",
-  # "results": [
-  #   {
-  #     "postid": 3,
-  #     "url": "/api/v1/posts/3/"
-  #   },
-  #   {
-  #     "postid": 2,
-  #     "url": "/api/v1/posts/2/"
-  #   },
-  #   {
-  #     "postid": 1,
-  #     "url": "/api/v1/posts/1/"
-  #   }
-  # ],
-  # "url": "/api/v1/posts/"
-
 # still need user authentication 
 def query_database_post(user_log):
     "Query database for postid/url"
+  
     connection = insta485.model.get_db()
     #spec: "each post is made by a user which the logged in user follows or the post is made by the logged in user. ""
    
-    #Fix limit to 10 posts combined? 
     cur = connection.execute(
         "SELECT postid FROM posts WHERE owner = ?",
           (user_log,)
@@ -78,11 +60,15 @@ def query_database_post(user_log):
     posts = posts_owner + posts_following
     return posts
 
-@insta485.app.route('/api/v1/posts/<int:postid_url_slug>/')
-def get_post(postid_url_slug):
+@insta485.app.route('/api/v1/posts/')
+def get_post():
     """Return 10 newest post urls/ids"""
+   
+    if "username" not in flask.session:
+        flask.abort(403)
+
     user_log = flask.session['username']
-    # Retrieve the 10 posts from func
+    # Retrieve the 10 posts from func set limit
     posts = query_database_post(user_log)
     limited_posts = posts[:10]
 
@@ -97,5 +83,3 @@ def get_post(postid_url_slug):
         "url": flask.request.path,
     }
     return flask.jsonify(response)
-
-
