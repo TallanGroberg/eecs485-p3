@@ -1,6 +1,6 @@
 """Login page for the photo sharing app."""
 import flask
-from flask import request, redirect, session
+from flask import request, redirect, session, make_response
 import insta485
 from insta485.views.accounts.check_password import check_password
 
@@ -34,6 +34,8 @@ def do_the_login():
 
     # Successful login, set the user ID in the session
     session['username'] = user['username']
+    response = make_response("Login successful!", 200)
+    response.set_cookie('username', user['username'])
 
     print(flask.session['username'])
 
@@ -54,4 +56,7 @@ def do_logout():
     # Remove the username from the session if it's there
     flask.session.clear()
     session['username'] = None
+    response = make_response("Logout successful!", 200)
+    response.set_cookie('username', '')
+
     return redirect('/accounts/login/')

@@ -71,7 +71,9 @@ def get_posts():
     for postid in postids:
         posts.append( get_1_post(postid['postid'] ))
     print(posts)
+
     return jsonify(posts=posts, url=request.path)
+
 
 @insta485.app.route('/api/v1/posts/<int:postid>/')
 def get_post(postid):

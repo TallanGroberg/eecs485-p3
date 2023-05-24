@@ -1,0 +1,27 @@
+#!/bin/bash
+set -Eeuo pipefail
+set -x
+
+curl -X POST http://localhost:8000/accounts/login \
+    -F username=awdeorio \
+    -F password=password \
+    -F operation=login \
+    --cookie-jar cookies.txt
+
+# curl -X POST http://localhost:8000/accounts/logout \
+#     -F username=awdeorio \
+#     -F password=password \
+#     -F operation=login \
+#     --cookie-jar cookies.txt
+
+# curl --cookie cookies.txt http://localhost:8000/
+
+# curl -X POST http://localhost:8000/posts/ \
+#     -F postid=1 \
+#     -F operation=delete \
+#     --cookie cookies.txt
+
+# curl -X POST http://localhost:8000/posts/ \
+#   -F postid=2 \
+#   -F operation=delete \
+#   --cookie cookies.txt

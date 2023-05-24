@@ -16,6 +16,9 @@ def show_create():
 
 def do_create():
     """Create a new account."""
+    if flask.session['username'] != None:
+        return flask.redirect("/accounts/edit/")
+
     filename = handle_file(flask.request.files['file'])
     username = request.form.get('username')
     password = request.form.get('password')
@@ -25,7 +28,7 @@ def do_create():
 
     connection = insta485.model.get_db()
 
-    cur = connection.execute(
+    connection.execute(
         "INSERT INTO users  (username, password, fullname, email, filename) "
         "VALUES (?, ?, ?, ?, ?)",
         (username, password, fullname, email, filename)

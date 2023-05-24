@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <title>{% block title %}{% endblock %}</title>
+  <title>{{ username }}</title>
   <!-- <link href="/insta485/templates/css/style.css" rel="stylesheet" type="text/css"> -->
 <body>
   <div class="header">
@@ -23,6 +23,7 @@
         <a class="user" href="/accounts/logout">
             <h4> logout </h4> 
         </a>
+        <a href="/accounts/{{ username }}/"> {{username}} </a>
     </div>
 </div>
 
