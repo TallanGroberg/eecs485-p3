@@ -50,6 +50,11 @@ def show_post(postid):
 
 
 @insta485.app.route('/api/v1/posts/')
+
+# username = flask.request.authorization['username']
+# password = flask.request.authorization['password']
+# print (username)
+# print (password)
 def get_posts():
     """Return 10 newest post urls and ids"""
     if "username" not in flask.session:
@@ -132,6 +137,13 @@ def get_1_post(postid):
 
     print("json ",jsonify(post[0]).data)
     return post[0]
+
+
+# @insta485.app.route('/api/v1/likes/?postid=<postid>', methods=["POST"])
+#     if like exists  
+#         return 200
+
+#     return 201
 
 
 
