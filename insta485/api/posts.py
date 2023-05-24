@@ -51,12 +51,15 @@ def show_post(postid):
 
 @insta485.app.route('/api/v1/posts/')
 
-# username = flask.request.authorization['username']
+#username = flask.request.authorization['username']
 # password = flask.request.authorization['password']
 # print (username)
 # print (password)
 def get_posts():
     """Return 10 newest post urls and ids"""
+    if "username" not in flask.session:
+        return flask.jsonify(message="Forbidden", status_code=403), 403
+    
     if "username" not in flask.session:
         flask.abort(403)
     

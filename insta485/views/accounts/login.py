@@ -16,8 +16,8 @@ def show_login():
 
 def do_the_login():
     """Handle the login process."""
-    username = request.form.get('username')
-    password = request.form.get('password')
+    username = flask.request.authorization['username']
+    password = flask.request.authorization['password']
     print(username, password)
 
     connection = insta485.model.get_db()
@@ -30,7 +30,7 @@ def do_the_login():
 
     if (user == None) or check_password(user['password'], password):
         print("Invalid username or password.")
-        return flask.render_template("login.html", error="Invalid username or password."), 401
+        return flask.render_template("login.html", error="Invalid username or password."), 403
 
     # Successful login, set the user ID in the session
     session['username'] = user['username']
