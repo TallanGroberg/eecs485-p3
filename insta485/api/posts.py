@@ -14,38 +14,51 @@ def get_resources():
     print(flask.jsonify(resources), "XXXXXXX")
     return flask.jsonify(resources)
 
-# fix user authentication 
 @insta485.app.route('/api/v1/posts/<int:postid_url_slug>/')
-def get_posts(postid_url_slug):
-    """Return 10 newest post urls and ids"""
+def get_post(postid_url_slug):
+    """Return post on postid.
+
+    Example:
+    {
+      "created": "2017-09-28 04:33:28",
+      "imgUrl": "/uploads/122a7d27ca1d7420a1072f695d9290fad4501a41.jpg",
+      "owner": "awdeorio",
+      "ownerImgUrl": "/uploads/e1a7c5c32973862ee15173b0259e3efdb6a391af.jpg",
+      "ownerShowUrl": "/users/awdeorio/",
+      "postShowUrl": "/posts/1/",
+      "url": "/api/v1/posts/1/"
+    }
+    """
     context = {
-      {"postid": post.postid, "url": f"/api/v1/posts/{post.postid}/"}
+        "created": "2017-09-28 04:33:28",
+        "imgUrl": "/uploads/122a7d27ca1d7420a1072f695d9290fad4501a41.jpg",
+        "owner": "awdeorio",
+        "ownerImgUrl": "/uploads/e1a7c5c32973862ee15173b0259e3efdb6a391af.jpg",
+        "ownerShowUrl": "/users/awdeorio/",
+        "postid": "/posts/{}/".format(postid_url_slug),
+        "url": flask.request.path,
     }
     return flask.jsonify(**context)
 
+# # fix user authentication 
 # @insta485.app.route('/api/v1/posts/<int:postid_url_slug>/')
-# def get_post(postid_url_slug):
-#     """Return post on postid.
+# def get_posts(postid_url_slug):
+#     """Return 10 newest post urls and ids"""
+#     logged_in_user = get_logged_in_user()
 
-#     Example:
-#     {
-#       "created": "2017-09-28 04:33:28",
-#       "imgUrl": "/uploads/122a7d27ca1d7420a1072f695d9290fad4501a41.jpg",
-#       "owner": "awdeorio",
-#       "ownerImgUrl": "/uploads/e1a7c5c32973862ee15173b0259e3efdb6a391af.jpg",
-#       "ownerShowUrl": "/users/awdeorio/",
-#       "postShowUrl": "/posts/1/",
-#       "url": "/api/v1/posts/1/"
-#     }
-#     """
-#     context = {
-#         "created": "2017-09-28 04:33:28",
-#         "imgUrl": "/uploads/122a7d27ca1d7420a1072f695d9290fad4501a41.jpg",
-#         "owner": "awdeorio",
-#         "ownerImgUrl": "/uploads/e1a7c5c32973862ee15173b0259e3efdb6a391af.jpg",
-#         "ownerShowUrl": "/users/awdeorio/",
-#         "postid": "/posts/{}/".format(postid_url_slug),
+#     # Retrieve the 10 newest posts that meet the criteria
+#     posts = query_newest_posts(logged_in_user)
+#     # Create a list of dictionaries containing the postid and URL for each post
+#     results = [
+#         {"postid": post.postid, "url": f"/api/v1/posts/{post.postid}/"}
+#         for post in posts
+#      ]
+#     response = {
+#         "next": "",
+#         "results": results,
 #         "url": flask.request.path,
 #     }
-#     return flask.jsonify(**context)
+#     return flask.jsonify(response)
+
+
 
