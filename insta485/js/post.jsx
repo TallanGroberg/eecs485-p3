@@ -13,6 +13,7 @@ export default function Post({ url }) {
   const [owner, setOwner] = useState("");
   const [created, setcreated] = useState("");
   const [postid, setPostid] = useState("");
+  const [comments, setComments] = useState([]);
 
 
   useEffect(() => {
@@ -30,12 +31,13 @@ export default function Post({ url }) {
         // the request. Otherwise, update the state to trigger a new render.
         if (!ignoreStaleRequest) {
           setImgUrl(data.imgUrl);
-          console.log(imgUrl);
+          console.log(data);
           setOwner(data.owner);
           setcreated(data.created);
           setOwnerImgUrl(data.ownerImgUrl);
           setPostid(data.postid);
-          console.log(owner);
+          setComments(data.comments);
+          console.log(data);
         }
       })
       .catch((error) => console.error(error));
@@ -47,6 +49,8 @@ export default function Post({ url }) {
     };
   }, [url]);
 
+  console.log(comments);
+
   // Render post image and post owner
   return (
     <div className="post">
@@ -56,7 +60,7 @@ export default function Post({ url }) {
         <p>{created}</p>
         </div>
       <img src={imgUrl} alt="post_image" />
-      <Comments url={"/api/v1/posts/"+ {postid} + "/comments/"} />
+      <Comments comments={comments} />
     </div>
   );
 }
