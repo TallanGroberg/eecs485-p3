@@ -7,6 +7,7 @@ URLs include:
 import flask
 import insta485
 from flask import request
+import base64
 
 
 @insta485.app.route('/accounts/', methods=["POST"])
@@ -19,6 +20,7 @@ def check_authorization():
 
     if not username or not password:
         return flask.jsonify(message="Invalid credentials", status_code=401), 401
+    
     
 def show_account():
     """Display /account route."""
