@@ -1,9 +1,18 @@
 #!/bin/bash
+# insta485test
 
+# Stops on errors and prints commands
 set -Eeuo pipefail
 set -x
 
+# Runs pycodestyle insta485
 pycodestyle insta485
+
+# Runs pydocstyle insta485
 pydocstyle insta485
+
+# Runs pylint insta485
 pylint insta485
+
+# Runs all unit tests using pytest
 pytest -v tests
