@@ -17,7 +17,7 @@ export default function Post({ post }) {
   return (
     <div className="post">
       <div className="post-header">
-        <img src={ownerImgUrl} alt="post_owner_image" />
+        <img src={ownerImgUrl} alt="post_owner_image" width="50" height="50" />
         <p>{owner}</p>
         <p>{created}</p>
         </div>

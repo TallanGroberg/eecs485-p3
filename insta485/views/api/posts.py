@@ -51,56 +51,30 @@ def get_posts():
         flask.abort(403)
     
     # get the MAX postid from the database
+    posts = []
+
+    #write a query to get the max postid
     connection = insta485.model.get_db()
-
-
     cur = connection.execute(
-        "SELECT posts.postid, posts.owner, posts.filename "
-        "AS imgUrl, posts.created "
+        "SELECT posts.postid "
         "FROM posts "
-        "ORDER BY posts.postid DESC "
-        "LIMIT 10 "
+        "ORDER BY posts.created DESC "
+        "LIMIT 10"
     )
-    posts = cur.fetchall()
-
-    for post in posts:
-        post['imgUrl'] = "/uploads/" + post['imgUrl'] 
-        post['postShowUrl'] = '/posts/' + str(post['postid']) + '/'
-        post['url'] = '/api/v1/posts/' + str(post['postid']) + '/'
-        post['comments'] = []
-
-        
-
-        cur2 = connection.execute(
-            "SELECT comments.commentid, comments.owner, comments.text "
-            "FROM comments "
-            "WHERE comments.postid = ?",
-            (post['postid'],)
-        )
-        comments = cur2.fetchall()
-
-        for comment in comments:
-            comment['ownerShowUrl'] = '/users/' + comment['owner'] + '/'
-            comment['url'] = '/api/v1/comments/' + str(comment['commentid']) + '/'
-            post['comments'].append(comment)
-
-        cur3 = connection.execute(
-            "SELECT username, filename AS ownerImgUrl "
-            "FROM users "
-            "WHERE users.username = ?",
-            (post['owner'],)
-        )
-        user = cur3.fetchall()
-        post['ownerImgUrl'] = "/uploads/" + user[0]['ownerImgUrl']
-        post['ownerShowUrl'] = "/users/" + user[0]['username'] + "/"
-        post['url'] = "/api/v1/posts/" + str(post['postid']) + "/"
-
-        
-
-    return flask.jsonify(posts=posts, url=request.path)
+    postids = cur.fetchall()
+    print(postids)
+    for postid in postids:
+        posts.append( get_1_post(postid['postid'] ))
+    print(posts)
+    return jsonify(posts=posts, url=request.path)
 
 @insta485.app.route('/api/v1/posts/<int:postid>/')
 def get_post(postid):
+    """Display /post the post route."""
+
+    return jsonify(get_1_post(postid))
+
+def get_1_post(postid):
     """Display /post the post route."""
     # Connect to the database
     connection = insta485.model.get_db()
@@ -150,7 +124,7 @@ def get_post(postid):
     # Add database info to context
 
     print("json ",jsonify(post[0]).data)
-    return jsonify(post[0])
+    return post[0]
 
 
 
