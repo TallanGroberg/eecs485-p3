@@ -26,7 +26,7 @@ def do_the_edit():
     cur = connection.execute(
         "UPDATE users "
         "WHERE username = ? ",
-        "SET fullname = ?, email = ?, filename = ?, "
+        "SET fullname = ?, email = ?, filename = ?, ",
         (fullname, email, file, session['username'])
     )
     connection.commit()
