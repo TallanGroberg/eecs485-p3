@@ -67,10 +67,8 @@ def get_posts():
         "LIMIT 10"
     )
     postids = cur.fetchall()
-    print(postids)
     for postid in postids:
         posts.append( get_1_post(postid['postid'] ))
-    print(posts)
 
     return jsonify(posts=posts, url=request.path)
 
@@ -130,7 +128,6 @@ def get_1_post(postid):
 
     # Add database info to context
 
-    print("json ",jsonify(post[0]).data)
     return post[0]
 
 

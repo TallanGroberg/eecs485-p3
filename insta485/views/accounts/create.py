@@ -4,6 +4,7 @@ from flask import request, redirect, session
 import insta485
 from insta485.views.accounts.check_password import hash_password
 from insta485.views.post import handle_file
+from insta485.views.accounts.login import do_the_login
 
 @insta485.app.route('/accounts/create/', methods=['GET', 'POST'])
 def show_create():
@@ -16,7 +17,7 @@ def show_create():
 
 def do_create():
     """Create a new account."""
-    if flask.session['username'] != None:
+    if request.authorization != None:
         return flask.redirect("/accounts/edit/")
 
     filename = handle_file(flask.request.files['file'])
@@ -37,7 +38,9 @@ def do_create():
     connection.commit()
 
 
-    session['username'] = username
+    do_the_login()
+
+    print(request.authorization)
 
     return redirect('/')
 
