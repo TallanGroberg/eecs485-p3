@@ -44,21 +44,14 @@ def get_post(postid_url_slug):
 # @insta485.app.route('/api/v1/posts/<int:postid_url_slug>/')
 # def get_posts(postid_url_slug):
 #     """Return 10 newest post urls and ids"""
-#     logged_in_user = get_logged_in_user()
 
 #     # Retrieve the 10 newest posts that meet the criteria
 #     posts = query_newest_posts(logged_in_user)
-#     # Create a list of dictionaries containing the postid and URL for each post
+
 #     results = [
 #         {"postid": post.postid, "url": f"/api/v1/posts/{post.postid}/"}
-#         for post in posts
 #      ]
-#     response = {
-#         "next": "",
-#         "results": results,
-#         "url": flask.request.path,
-#     }
-#     return flask.jsonify(response)
+#     return flask.jsonify(result)
 
 
 
