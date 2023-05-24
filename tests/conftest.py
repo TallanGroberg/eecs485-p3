@@ -19,7 +19,7 @@ import subprocess
 import sqlite3
 
 import pytest
-# import insta485
+import insta485
 
 # Set up logging
 LOGGER = logging.getLogger("autograder")
