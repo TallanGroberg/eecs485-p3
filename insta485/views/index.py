@@ -11,6 +11,7 @@ import insta485
 @insta485.app.route('/')
 def show_index():
     """Display / route."""
-    context = {"posts": "test"}
+    if 'username' not in flask.session:
+        return flask.redirect(flask.url_for('show_login'))
 
     return flask.render_template("index.html", **context)
