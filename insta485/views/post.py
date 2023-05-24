@@ -11,58 +11,6 @@ import pathlib
 import uuid
 
 
-@insta485.app.route('/api/v1/posts/<int:postid>/')
-def show_post(postid):
-    """Display /post the post route."""
-    # Connect to the database
-    connection = insta485.model.get_db()
-    if 'username' not in flask.session:
-        return flask.redirect(flask.url_for('show_login'))
-
-    cur = connection.execute(
-        "SELECT posts.postid, posts.owner, posts.filename "
-        "AS imgUrl, posts.created "
-        "FROM posts "
-        "WHERE posts.postid = ?",
-        (postid,)
-    )
-
-
-    post = cur.fetchall()
-    post[0]['imgUrl'] = "/uploads/" + post[0]['imgUrl'] 
-    post[0]['postShowUrl'] = '/posts/' + str(postid) + '/'
-    post[0]['url'] = '/api/v1/posts/' + str(postid) + '/'
-    post[0]['comments'] = []
-
-    cur2 = connection.execute(
-        "SELECT comments.commentid, comments.owner, comments.text "
-        "FROM comments "
-        "WHERE comments.postid = ?",
-        (postid, )
-    )
-    comments = cur2.fetchall()
-
-    for comment in comments:
-        comment['lognameOwnsThis'] = comment['owner'] == session['username']
-        comment['url'] = '/api/v1/comments/' + str(comment['commentid']) + '/'
-        comment['ownerShowUrl'] = '/users/' + comment['owner'] + '/'
-        comment['url'] = '/api/v1/comments/' + str(comment['commentid']) + '/'
-        post[0]['comments'].append(comment)
-
-    cur3 = connection.execute(
-        "SELECT username, filename AS ownerImgUrl "
-        "FROM users "
-        "WHERE users.username = ?",
-        (post[0]['owner'],)
-    )
-    user = cur3.fetchall()
-    post[0]['ownerImgUrl'] = "/uploads/" + user[0]['ownerImgUrl']
-    post[0]['ownerShowUrl'] = "/users/" + user[0]['username'] +  "/"
-
-    # Add database info to context
-
-    print("json ",jsonify(post[0]).data)
-    return jsonify(post[0])
 
 
 @insta485.app.route('/posts/', methods=['POST', 'GET'])
