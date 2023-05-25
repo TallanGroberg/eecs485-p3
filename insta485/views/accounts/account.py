@@ -20,18 +20,15 @@ def show_account():
     connection = insta485.model.get_db()
     username = flask.session['username']
     cur = connection.execute(
-        "SELECT username "
+        "SELECT * "
         "FROM users "
         "WHERE username = ?",
         (username, )
     )
-    users = cur.fetchall()
+    context = cur.fetchall()
 
     # Add database info to context
-    context = {"users": users}
-    print("HERE2")
     if target == None:
-        return flask.render_template("user.html", **context)
+        return flask.render_template("user.html", **context[0])
     else:
         return flask.redirect(target[0])
-
