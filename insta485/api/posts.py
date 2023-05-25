@@ -58,27 +58,32 @@ def show_post(postid):
 def get_posts():
     """Return 10 newest post urls and ids"""
     # check if user is logged in
-    
-    
-    
-<<<<<<< HEAD
-    # if "username" not in flask.session:
-    #     flask.abort(403)
-=======
->>>>>>> ed1c975b2bd779639774eac4137dc61a5a1db3de
-    
 
     #write a query to get the max postid
     connection = insta485.model.get_db()
-    cur = connection.execute(
-    "SELECT p.postid "
-    "FROM posts p "
-    "LEFT JOIN following f ON p.owner = f.username2 AND f.username1 = ? "
-    "WHERE p.owner = ? OR f.username1 IS NOT NULL "
-    "ORDER BY p.postid DESC "
-    "LIMIT 10",
-    (flask.request.authorization['username'],flask.request.authorization['username'])
-    )
+    if flask.request.authorization: 
+        cur = connection.execute(
+            "SELECT p.postid "
+            "FROM posts p "
+            "LEFT JOIN following f ON p.owner = f.username2 AND f.username1 = ? "
+            "WHERE p.owner = ? OR f.username1 IS NOT NULL "
+            "ORDER BY p.postid DESC "
+            "LIMIT 10",
+        (flask.request.authorization['username'],flask.request.authorization['username'])
+        )
+    else: 
+        username = flask.request.form['username']
+        password = flask.request.form['password']
+        cur = connection.execute(
+            "SELECT p.postid "
+            "FROM posts p "
+            "LEFT JOIN following f ON p.owner = f.username2 AND f.username1 = ? "
+            "WHERE p.owner = ? OR f.username1 IS NOT NULL "
+            "ORDER BY p.postid DESC "
+            "LIMIT 10",
+        (flask.request.authorization['username'],flask.request.authorization['username'])
+        )
+
     postids = cur.fetchall()
     print(postids)
     final = []
