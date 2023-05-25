@@ -5,61 +5,11 @@ URLs include:
 /post/*
 """
 import flask
-from flask import request, redirect, session
-import insta485
+from flask import request, redirect, session, jsonify
+import insta485 
 import pathlib
 import uuid
 
-
-@insta485.app.route('/api/v1/posts/<int:postid>/')
-def show_post(postid):
-    """Display /post the post route."""
-    # Connect to the database
-    connection = insta485.model.get_db()
-
-    cur = connection.execute(
-        "SELECT posts.postid, posts.owner, posts.filename, posts.created "
-        "FROM posts "
-        "WHERE posts.postid = ?",
-        (postid,)
-    )
-
-    post = cur.fetchall()
-
-    cur2 = connection.execute(
-        "SELECT comments.postid, comments.owner, "
-        "comments.commentid, comments.text "
-        "FROM comments "
-        "WHERE comments.postid = ?",
-        (postid, )
-    )
-
-    cur3 = connection.execute(
-        "SELECT filename "
-        "FROM users "
-        "WHERE users.username = ?",
-        (post[0]['owner'],)
-    )
-
-    comments = cur2.fetchall()
-    post[0]['user_filename'] = cur3.fetchone()['filename']
-
-    cur4 = connection.execute(
-        "SELECT filename "
-        "FROM users "
-        "WHERE users.username = ?",
-        (comments[0]['owner'],)
-    )
-    comments[0]['user_filename'] = cur4.fetchall()
-    print(comments[0]['user_filename'])
-    # Add database info to context
-    context = {"posts": post,
-               "comments": comments
-               }
-    # print(post[0]['user_filename'])
-
-
-    return flask.render_template("post.html", **context)
 
 
 @insta485.app.route('/posts/', methods=['POST', 'GET'])
@@ -124,4 +74,3 @@ def handle_file(fileobj):
     print(uuid_basename)
     fileobj.save(path)
     return uuid_basename
-
