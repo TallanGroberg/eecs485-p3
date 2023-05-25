@@ -1,0 +1,12 @@
+{% extends "account.html" %}
+
+{% block context %} 
+<form action="/accounts/edit/?target=/" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" accept="image/*"/>
+    <input type="text" name="fullname" value="{{ fullname }}" required/>
+    <input type="text" name="email" value="{{ email }}" required/>
+    <input type="submit" name="update" value="submit"/> 
+    <input type="hidden" name="operation" value="edit_account"/> <br />
+  </form>
+
+{% endblock %}
