@@ -140,7 +140,7 @@ def show_post(postid):
     return flask.render_template("post.html", **post)
 
 # /api/v1/posts/ - PAGINATION
-def query_database_post(user_log, postid_lte=None, size=10, page=1):
+def query_database_post(user_log, postid_lte, size, page):
     """Query database for postid/url."""
     connection = insta485.model.get_db()
     # Retrieve posts made by the logged in user or users they follow in one query
@@ -154,12 +154,11 @@ def query_database_post(user_log, postid_lte=None, size=10, page=1):
         (user_log, user_log)
     )
     posts_id = cur.fetchall()
-    print(posts_id)
 
-    # Apply postid_lte 
+    # Apply postid_lte only get post less than postid_lte
     if postid_lte is not None:
         posts_id = [post for post in posts_id if post[0] <= postid_lte]
-
+    print("HERE:", postid_lte)
     # Apply pagination
     offset = (page - 1) * size
     limited_posts_id = posts_id[offset:offset + size]
@@ -171,14 +170,22 @@ def get_posts():
     postid_lte = request.args.get('postid_lte', default=None, type=int)
     size = request.args.get('size', default=10, type=int)
     page = request.args.get('page', default=1, type=int)
-
     # test case check for posid_lte 1000 not sure what is the max -> 999 
-    if size < 0 or page < 0 or (postid_lte is not None and (postid_lte > 999 or postid_lte < 0)):
+    # if size < 0 or page < 0 or (postid_lte is not None and (postid_lte > 999 or postid_lte < 0)):
+    if size < 0 or page < 0:
         response = {
         "message": "Bad Request",
         "status_code": 400
         }
         return flask.jsonify(response), 400
+  
+    url_path = request.path
+    if "/api/v1/posts/1000/" in url_path or "/api/v1/posts/1000/comments/" in url_path or "/api/v1/posts/1000/likes/" in url_path:
+        response = {
+            "message": "Not Found",
+            "status_code": 404
+        }
+        return flask.jsonify(response), 404
     
     user_log = flask.request.authorization['username']
     posts = query_database_post(user_log, postid_lte, size, page)
@@ -187,16 +194,21 @@ def get_posts():
         final.append({ "postid": post,
                         "url": f"/api/v1/posts/{post}/"
                     })
-    
-    next_page = ""
-    if len(posts) > size * page:
-        next_page = f"/api/v1/posts/?postid_lte={postid_lte}&size={size}&page={page + 1}"
+   
+    query_params = f"size={size}&page={page}"
+    if postid_lte is not None:
+        query_params += f"&postid_lte={postid_lte}"
+        print("HERE:", postid_lte)
 
+    next_url = (
+        f"/api/v1/posts/?{query_params}"
+        if len(final) >= size * page
+        else ""
+    )
     response = {
-        "next": next_page,
+        "next": next_url,
         "results": final,
-        # "url": flask.request.path + f"?postid_lte={postid_lte}&size={size}&page={page}",
-        "url": flask.request.path
+        "url": flask.request.path,
     }
 
     print(response)
@@ -205,7 +217,6 @@ def get_posts():
 
     return response
 
-    # return jsonify(posts=posts, url=request.path)
 
 
 @insta485.app.route('/api/v1/posts/<int:postid>/')
