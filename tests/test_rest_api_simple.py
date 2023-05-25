@@ -43,6 +43,7 @@ def test_login_session(client):
 
     # Access granted because session already exists
     response = client.get("/api/v1/posts/")
+    print(" !!!!!!!!!!!!!!!!!!!!!!!!!!",response.status_code)
     assert response.status_code == 200
 
 

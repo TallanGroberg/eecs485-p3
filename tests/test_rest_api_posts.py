@@ -21,6 +21,7 @@ def test_posts_list(client):
     assert response.status_code == 200
     response_json = response.get_json()
 
+
     assert response_json == {
         "next": "",
         "results": [

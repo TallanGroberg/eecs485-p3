@@ -3,7 +3,7 @@ import flask
 from flask import request, redirect, session, make_response
 import insta485
 from insta485.views.accounts.check_password import check_password
-
+import base64
 
 @insta485.app.route('/accounts/login/', methods=['GET', 'POST'])
 def show_login():
@@ -39,11 +39,14 @@ def do_the_login():
 
     # Successful login, set the user ID in the session
     session['username'] = user['username']
-    session['password'] = password
-    response = make_response("Login successful!", 200)
+    response = make_response("status_code", 200)
     response.set_cookie('username', user['username'])
 
-    print(flask.session['username'])
+    credentials = base64.b64encode((session['username']+ ":"+ password)).decode('utf-8')
+    
+    response.headers  = {"Authorization": f"Basic {credentials}"}
+    
+
 
     # Redirect to the desired page after successful login
     target = request.args.get('target')
