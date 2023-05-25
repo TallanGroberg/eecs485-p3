@@ -16,9 +16,14 @@ def show_login():
 
 def do_the_login():
     """Handle the login process."""
-    username = flask.request.authorization['username']
-    password = flask.request.authorization['password']
-    print(username, password)
+    if flask.request.authorization:
+        username = flask.request.authorization['username']
+        password = flask.request.authorization['password']
+    # print(username, password)
+    else:
+        username = flask.request.form['username']
+        password = flask.request.form['password']
+    
 
     connection = insta485.model.get_db()
 
@@ -34,6 +39,7 @@ def do_the_login():
 
     # Successful login, set the user ID in the session
     session['username'] = user['username']
+    session['password'] = password
     response = make_response("Login successful!", 200)
     response.set_cookie('username', user['username'])
 

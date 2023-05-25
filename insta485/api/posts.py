@@ -60,8 +60,8 @@ def get_posts():
     if "username" not in flask.session:
         return flask.jsonify(message="Forbidden", status_code=403), 403
     
-    if "username" not in flask.session:
-        flask.abort(403)
+    # if "username" not in flask.session:
+    #     flask.abort(403)
     
     # get the MAX postid from the database
     posts = []
