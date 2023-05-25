@@ -195,7 +195,8 @@ def get_posts():
     response = {
         "next": next_page,
         "results": final,
-        "url": flask.request.path + f"?postid_lte={postid_lte}&size={size}&page={page}",
+        # "url": flask.request.path + f"?postid_lte={postid_lte}&size={size}&page={page}",
+        "url": flask.request.path
     }
 
     print(response)
