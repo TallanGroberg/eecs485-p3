@@ -158,7 +158,7 @@ def query_database_post(user_log, postid_lte, size, page):
     # Apply postid_lte only get post less than postid_lte
     if postid_lte is not None:
         posts_id = [post for post in posts_id if post[0] <= postid_lte]
-    print("HERE:", postid_lte)
+    print("POSTID:", postid_lte)
     # Apply pagination
     offset = (page - 1) * size
     limited_posts_id = posts_id[offset:offset + size]
@@ -168,8 +168,11 @@ def query_database_post(user_log, postid_lte, size, page):
 def get_posts():
     """Return 10 newest post urls and ids"""
     postid_lte = request.args.get('postid_lte', default=None, type=int)
+    print("POSTID:", postid_lte)
     size = request.args.get('size', default=10, type=int)
+    print("Size:", size)
     page = request.args.get('page', default=1, type=int)
+    print("page:", page)
     # test case check for posid_lte 1000 not sure what is the max -> 999 
     # if size < 0 or page < 0 or (postid_lte is not None and (postid_lte > 999 or postid_lte < 0)):
     if size < 0 or page < 0:
