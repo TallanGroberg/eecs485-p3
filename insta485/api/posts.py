@@ -1,6 +1,6 @@
 """REST API for posts."""
 import flask
-from flask import request, redirect, session, jsonify
+from flask import request, redirect, session, jsonify, make_response
 import insta485
 
 
@@ -57,30 +57,46 @@ def show_post(postid):
 # print (password)
 def get_posts():
     """Return 10 newest post urls and ids"""
-    if "username" not in flask.session:
-        return flask.jsonify(message="Forbidden", status_code=403), 403
+    # check if user is logged in
     
-    if "username" not in flask.session:
-        flask.abort(403)
     
-    # get the MAX postid from the database
-    posts = []
+    
+    
 
     #write a query to get the max postid
     connection = insta485.model.get_db()
     cur = connection.execute(
-        "SELECT posts.postid "
-        "FROM posts "
-        "ORDER BY posts.created DESC "
-        "LIMIT 10"
+    "SELECT p.postid "
+    "FROM posts p "
+    "LEFT JOIN following f ON p.owner = f.username2 AND f.username1 = ? "
+    "WHERE p.owner = ? OR f.username1 IS NOT NULL "
+    "ORDER BY p.postid DESC "
+    "LIMIT 10",
+    (flask.request.authorization['username'],flask.request.authorization['username'])
     )
     postids = cur.fetchall()
     print(postids)
+    final = []
     for postid in postids:
-        posts.append( get_1_post(postid['postid'] ))
-    print(posts)
+        # posts.append( get_1_post(postid['postid'] ))
+        final.append({ "postid": postid['postid'],
+                        "url":'/api/v1/posts/' + str(postid['postid']) + '/'
+                    })
+    
+    response = {
+        "next": '',
+        "results": final,
+        "url": request.path
+    }
 
-    return jsonify(posts=posts, url=request.path)
+    print(response)
+    response = make_response(jsonify(response))
+    
+    response.headers["status_code"] = "200 OK"
+
+    return response
+
+    # return jsonify(posts=posts, url=request.path)
 
 
 @insta485.app.route('/api/v1/posts/<int:postid>/')
