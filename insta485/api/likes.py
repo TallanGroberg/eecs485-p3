@@ -7,31 +7,32 @@ import insta485
 def like_exists(postid, user_log):
     connection = insta485.model.get_db()
     cur = connection.execute(
-        #fix
         "SELECT EXISTS (SELECT 1 FROM likes WHERE owner = ? AND postid = ?)",
         (user_log, postid)
     )
-    result = cur.fetchone()[0]
-    return result == 1
+    result = cur.fetchone()
+    if result is not None and result[0] == 1:
+        return True, result[0]
+    return False, None
 
 
-@insta485.app.route('/api/v1/likes/?postid=<postid>', methods=["POST"])
+@insta485.app.route('/api/v1/likes/', methods=['POST'])
 def create_like():
     """Create a new 'like' for a specific post."""
     postid = request.args.get('postid', type=int)
-
+    print("POSTID:", postid)
     if flask.request.authorization:
         user_log = flask.request.authorization['username']
     else:
         user_log = session['username']
         
     # Check if the 'like' already exists for the postid
-    if like_exists(postid, user_log):
+    exists, likeid = like_exists(postid, user_log)
+    if exists:
         # Return the existing like with a 200 response - already exists
-        path = f"/api/v1/likes/{postid}/"
         likes = {
-            "likeid": postid,
-            "url": path,
+            "likeid": likeid,
+            "url": f"/api/v1/likes/{likeid}/",
         }
         return jsonify(likes), 200
     else:
@@ -47,7 +48,7 @@ def create_like():
         )
         result = cur.fetchone()
         num_likes = result[0]
-        #add login user's like to like table
+        #add login user's like to likes table
         connection.execute(
             # fix: add likesid/created?
             "INSERT INTO likes (owner, postid) "
@@ -61,3 +62,5 @@ def create_like():
             "url": path,
         }
         return jsonify(likes), 201
+
+
