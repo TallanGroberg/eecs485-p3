@@ -1,12 +1,13 @@
 """REST API for posts."""
 import flask
 # from flask import request, redirect, session, jsonify, make_response
-from flask import request, redirect, session, jsonify, Response
+from flask import request, session, jsonify
 import insta485
 
 
 @insta485.app.route('/api/v1/')
 def get_resources():
+    """Return API resource URLs."""
     resources = {
         "posts": "/api/v1/posts/",
         "comments": "/api/v1/comments/",
@@ -16,21 +17,20 @@ def get_resources():
     print(flask.jsonify(resources), "XXXXXXX")
     return flask.jsonify(resources)
 
+
 @insta485.app.route('/posts/<int:postid>/', methods=['GET'])
 def show_post(postid):
+    """Show post."""
     post = get_1_post(postid)
     return flask.render_template("post.html", **post)
 
 
 @insta485.app.route('/api/v1/posts/', methods=['GET'])
 def get_posts():
-    """Return 10 newest post urls and ids"""
+    """Return 10 newest post urls and ids."""
     postid_lte = request.args.get('postid_lte', default=None, type=int)
-    print("POSTID:", postid_lte)
     size = request.args.get('size', default=10, type=int)
-    print("Size:", size)
     page = request.args.get('page', default=1, type=int)
-    print("page:", page)
 
     if size < 0 or page < 0:
         response = {
@@ -38,15 +38,15 @@ def get_posts():
             "status_code": 404
         }
         return flask.jsonify(response), 404
-    
+
     # user_log = flask.request.authorization['username']
     if flask.request.authorization:
         user_log = flask.request.authorization['username']
     else:
         user_log = session['username']
-    
+
     connection = insta485.model.get_db()
-    # Retrieve posts made by the logged in user or users they follow in one query
+
     cur = connection.execute(
         "SELECT p.postid "
         "FROM posts p "
@@ -59,35 +59,39 @@ def get_posts():
     # path = flask.request.path
     path = flask.request.url
     path = path.split("//")[-1].replace("localhost", "")
-    
+
     #  get posts all postid less than or equal to postid_lte
     if postid_lte is not None:
         # posts_id = [post for post in posts_id if post[size] <= postid_lte]
-        path = f"/api/v1/posts/?size={size}&page={page}&postid_lte={postid_lte}"
+        path = "/api/v1/posts/?" + \
+                f"size={size}&" + \
+                f"page={page}&" + \
+                f"postid_lte={postid_lte}"
         page = page + 1
-        filtered_posts_id = []
+        # filtered_posts_id = []
         for post in posts_id:
-            print("Post:", post)
-            if post['postid'] <= postid_lte:
-                filtered_posts_id.append(post)
-                posts_id = filtered_posts_id
-    print("HERE:", postid_lte)  
-    # determine the start index/offeset for where to get posts 
+            posts_id = [
+                post for post in posts_id if post['postid'] <= postid_lte]
+            # if post['postid'] <= postid_lte:
+            #     filtered_posts_id.append(post)
+            #     posts_id = filtered_posts_id
+    # determine the start index/offeset for where to get posts
     offset = (page - 1) * size
     limited_posts_id = posts_id[offset:offset + size]
-    # Determine the value for "next" URL  --> spec 
+    # Determine the value for "next" URL  --> spec
     if len(limited_posts_id) < size:
         next_url = ""
     elif len(limited_posts_id) >= size:
         postid_lte = posts_id[0]['postid']
-        print("HERE:", postid_lte)  
-        next_url = f"/api/v1/posts/?size={size}&page={page}&postid_lte={postid_lte}"
-
+        next_url = "/api/v1/posts/?" + \
+            f"size={size}&" + \
+            f"page={page}&" + \
+            f"postid_lte={postid_lte}"
     posts = [post['postid'] for post in limited_posts_id]
 
     final = []
     for post in posts:
-        final.append({ 
+        final.append({
             "postid": post,
             "url": f"/api/v1/posts/{post}/"
         })
@@ -110,6 +114,7 @@ def get_post(postid):
     """Display /post the post route."""
     return jsonify(get_1_post(postid))
 
+
 def get_1_post(postid):
     """Display /post the post route."""
     # Connect to the database
@@ -122,7 +127,7 @@ def get_1_post(postid):
             "status_code": 404
         }
         return flask.jsonify(response), 404
-    
+
     if flask.request.authorization:
         user_log = flask.request.authorization['username']
     else:
@@ -170,11 +175,11 @@ def get_1_post(postid):
     if user is not None:
         post["ownerImgUrl"] = "/uploads/" + user["ownerImgUrl"]
         post["ownerShowUrl"] = "/users/" + user["username"] + "/"
-    print(post)
+    # print(post)
     return post
 
 # @insta485.app.route('/api/v1/likes/?postid=<postid>', methods=["POST"])
-#     if like exists  
+#     if like exists
 #         return 200
 
 #     return 201
