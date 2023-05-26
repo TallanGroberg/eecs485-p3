@@ -11,10 +11,20 @@ def like_exists(postid, user_log):
         (user_log, postid)
     )
     result = cur.fetchone()
-    if result is not None and result[0] == 1:
-        return True, result[0]
-    return False, None
+    if result is not None and len(result) == 1:
+        return True
+    return False
 
+def get_like_id(postid, owner):
+    connection = insta485.model.get_db()
+    cur = connection.execute(
+        "SELECT likeid FROM likes WHERE postid = ? AND owner = ?",
+        (postid, owner)
+    )
+    result = cur.fetchone()
+    if result is not None:
+        return result['likeid']
+    return None
 
 @insta485.app.route('/api/v1/likes/', methods=['POST'])
 def create_like():
@@ -27,9 +37,10 @@ def create_like():
         user_log = session['username']
         
     # Check if the 'like' already exists for the postid
-    exists, likeid = like_exists(postid, user_log)
-    if exists:
+   
+    if like_exists(postid, user_log):
         # Return the existing like with a 200 response - already exists
+        likeid = get_like_id(postid, user_log)
         likes = {
             "likeid": likeid,
             "url": f"/api/v1/likes/{likeid}/",
@@ -62,5 +73,3 @@ def create_like():
             "url": path,
         }
         return jsonify(likes), 201
-
-
