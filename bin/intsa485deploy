@@ -1,0 +1,5 @@
+#!/bin/bash
+
+curl -v -b cookies.txt "http://ec2-18-224-165-39.us-east-2.compute.amazonaws.com/" > deployed_index.html 2> deployed_index.log
+curl -v -b cookies.txt "http://ec2-18-224-165-39.us-east-2.compute.amazonaws.com/static/js/bundle.js" > deployed_bundle.js 2> deployed_bundle.log
+
