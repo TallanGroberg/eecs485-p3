@@ -1,7 +1,7 @@
 """REST API for posts."""
 import flask
-# from flask import request, redirect, session, jsonify, make_response
 from flask import request, session, jsonify
+# from flask import request, session, jsonify
 import insta485
 
 
@@ -35,9 +35,9 @@ def get_posts():
     if size < 0 or page < 0:
         response = {
             "message": "Bad Request",
-            "status_code": 404
+            "status_code": 400
         }
-        return flask.jsonify(response), 404
+        return flask.jsonify(response), 400
 
     # user_log = flask.request.authorization['username']
     if flask.request.authorization:
@@ -46,7 +46,6 @@ def get_posts():
         user_log = session['username']
 
     connection = insta485.model.get_db()
-
     cur = connection.execute(
         "SELECT p.postid "
         "FROM posts p "
@@ -56,25 +55,18 @@ def get_posts():
         (user_log, user_log)
     )
     posts_id = cur.fetchall()
-    # path = flask.request.path
     path = flask.request.url
     path = path.split("//")[-1].replace("localhost", "")
-
     #  get posts all postid less than or equal to postid_lte
     if postid_lte is not None:
-        # posts_id = [post for post in posts_id if post[size] <= postid_lte]
         path = "/api/v1/posts/?" + \
                 f"size={size}&" + \
                 f"page={page}&" + \
                 f"postid_lte={postid_lte}"
         page = page + 1
-        # filtered_posts_id = []
         for post in posts_id:
             posts_id = [
                 post for post in posts_id if post['postid'] <= postid_lte]
-            # if post['postid'] <= postid_lte:
-            #     filtered_posts_id.append(post)
-            #     posts_id = filtered_posts_id
     # determine the start index/offeset for where to get posts
     offset = (page - 1) * size
     limited_posts_id = posts_id[offset:offset + size]
@@ -100,10 +92,6 @@ def get_posts():
         "results": final,
         "url": path,
     }
-
-    # response = make_response(jsonify(response))
-    # response.headers["status_code"] = "200 OK"
-    # return response
     response = jsonify(response)
     response.headers["status_code"] = 200
     return response
@@ -112,15 +100,13 @@ def get_posts():
 @insta485.app.route('/api/v1/posts/<int:postid>/')
 def get_post(postid):
     """Display /post the post route."""
-    return jsonify(get_1_post(postid))
+    return get_1_post(postid)
 
 
 def get_1_post(postid):
     """Display /post the post route."""
     # Connect to the database
     connection = insta485.model.get_db()
-    # if 'username' not in flask.session:
-    #     return flask.redirect(flask.url_for('show_login'))
     if postid > 999:
         response = {
             "message": "Not Found",
@@ -128,58 +114,62 @@ def get_1_post(postid):
         }
         return flask.jsonify(response), 404
 
-    if flask.request.authorization:
-        user_log = flask.request.authorization['username']
-    else:
-        user_log = session['username']
-
     cur = connection.execute(
         "SELECT posts.postid, posts.owner, posts.filename "
         "AS imgUrl, posts.created "
         "FROM posts "
         "WHERE posts.postid = ?",
-        (postid,),
+        (postid,)
     )
 
-    post = cur.fetchone()
-    if post is None:
-        return {}  # Return an empty dictionary for non-existing posts
-
-    post["imgUrl"] = "/uploads/" + post["imgUrl"]
-    post["postShowUrl"] = "/posts/" + str(postid) + "/"
-    post["url"] = "/api/v1/posts/" + str(postid) + "/"
-    post["comments"] = []
+    post = cur.fetchall()
+    post[0]['imgUrl'] = "/uploads/" + post[0]['imgUrl']
+    post[0]['postShowUrl'] = '/posts/' + str(postid) + '/'
+    post[0]['url'] = '/api/v1/posts/' + str(postid) + '/'
+    post[0]['comments'] = []
+    post[0]['comments_url'] = "/api/v1/comments/?postid=" + str(postid)
 
     cur2 = connection.execute(
         "SELECT comments.commentid, comments.owner, comments.text "
         "FROM comments "
         "WHERE comments.postid = ?",
-        (postid,),
+        (postid, )
     )
     comments = cur2.fetchall()
 
-    for comment in comments:
-        comment["lognameOwnsThis"] = comment["owner"] == user_log
-        comment["url"] = "/api/v1/comments/" + str(comment["commentid"]) + "/"
-        comment["ownerShowUrl"] = "/users/" + comment["owner"] + "/"
-        comment["url"] = "/api/v1/comments/" + str(comment["commentid"]) + "/"
-        post["comments"].append(comment)
-
-    cur3 = connection.execute(
+    cur4 = connection.execute(
         "SELECT username, filename AS ownerImgUrl "
         "FROM users "
         "WHERE users.username = ?",
-        (post["owner"],),
+        (post[0]['owner'],)
     )
-    user = cur3.fetchone()
-    if user is not None:
-        post["ownerImgUrl"] = "/uploads/" + user["ownerImgUrl"]
-        post["ownerShowUrl"] = "/users/" + user["username"] + "/"
-    # print(post)
-    return post
+    user = cur4.fetchall()
+    post[0]['ownerImgUrl'] = "/uploads/" + user[0]['ownerImgUrl']
+    post[0]['ownerShowUrl'] = "/users/" + user[0]['username'] + "/"
 
-# @insta485.app.route('/api/v1/likes/?postid=<postid>', methods=["POST"])
-#     if like exists
-#         return 200
+    for comment in comments:
+        comment['lognameOwnsThis'] = comment['owner'] == user[0]['username']
+        comment['url'] = '/api/v1/comments/' + str(comment['commentid']) + '/'
+        comment['ownerShowUrl'] = '/users/' + comment['owner'] + '/'
+        comment['url'] = '/api/v1/comments/' + str(comment['commentid']) + '/'
+        post[0]['comments'].append(comment)
 
-#     return 201
+    # get likes
+    cur3 = connection.execute(
+        "SELECT * "
+        "FROM likes "
+        "WHERE likes.postid = ?",
+        (postid, )
+    )
+    likes = cur3.fetchall()
+
+    # print("likes:       ",likes)
+    post[0]['likes'] = {}
+    post[0]['likes']['numLikes'] = len(likes)
+    post_likes_this = likes[0]['owner'] == user[0]['username']
+    post[0]['likes']['lognameLikesThis'] = post_likes_this
+    post[0]['likes']['url'] = '/api/v1/likes/' + str(likes[0]['likeid']) + '/'
+
+    # Add database info to context
+
+    return post[0]
