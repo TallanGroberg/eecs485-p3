@@ -12,11 +12,14 @@ def like_exists(postid, user_log):
     )
     result = cur.fetchone()
     if result is not None and len(result) == 1:
+        print("no: 1")
         return True
-    return False
+    else:
+        return False
 
 def get_like_id(postid, owner):
     connection = insta485.model.get_db()
+    print("no: 3")
     cur = connection.execute(
         "SELECT likeid FROM likes WHERE postid = ? AND owner = ?",
         (postid, owner)
@@ -31,14 +34,16 @@ def create_like():
     """Create a new 'like' for a specific post."""
     postid = request.args.get('postid', type=int)
     print("POSTID:", postid)
+
     if flask.request.authorization:
         user_log = flask.request.authorization['username']
     else:
         user_log = session['username']
-        
+
+    print("name:",  user_log )        
     # Check if the 'like' already exists for the postid
-   
-    if like_exists(postid, user_log):
+    if like_exists(postid, user_log) == True:
+        print("no: 2")
         # Return the existing like with a 200 response - already exists
         likeid = get_like_id(postid, user_log)
         likes = {
@@ -47,6 +52,7 @@ def create_like():
         }
         return jsonify(likes), 200
     else:
+        print("HERE: CORRECT")
         # Create a new like and return with a 201 response
         path = f"/api/v1/likes/{postid}/"
         owner = user_log
