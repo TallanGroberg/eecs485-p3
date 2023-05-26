@@ -6,7 +6,7 @@ import Posts from './Posts';
 const App = () => {
     return (
         <div>
-            <Header />
+            <Header  />
             <Posts url="/api/v1/posts/" />
         </div>
     );

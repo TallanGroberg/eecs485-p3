@@ -51,7 +51,7 @@ def require_authentication(f):
     def decorated(*args, **kwargs):
         """Check if the user is authenticated."""
     
-        if 'username' not in session and 'password' not in session:
+        if 'username' not in flask.session and 'password' not in flask.session:
             print(args)
             return jsonify({'message': 'Authentication required'}), 403
         

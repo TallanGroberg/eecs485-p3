@@ -2,6 +2,7 @@
 import flask
 from flask import request, redirect, session, jsonify, make_response
 import insta485
+from insta485.views.accounts.login import require_authentication
 import json
 from functools import wraps
 
@@ -26,9 +27,10 @@ def show_post(postid):
 
 
 @insta485.app.route('/api/v1/posts/')
+@require_authentication
 def get_posts():
     """Return 10 newest post urls and ids"""
-
+    print(session)
 
     connection = insta485.model.get_db()
     cur = connection.execute(
@@ -38,7 +40,7 @@ def get_posts():
     "WHERE p.owner = ? OR f.username1 IS NOT NULL "
     "ORDER BY p.postid DESC "
     "LIMIT 10",
-    (flask.request.authorization['username'],flask.request.authorization['username'])
+    (session['username'],session['username'])
     )
     postids = cur.fetchall()
     print(postids)
@@ -56,9 +58,8 @@ def get_posts():
     }
 
     print(response)
-    response = make_response(jsonify(response))
+    response = jsonify(response)
     
-    response.headers["status_code"] = "200 OK"
 
     return response
 

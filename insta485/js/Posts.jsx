@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 
 const Posts = ({url}) => {
     const [posts, setPosts] = useState([]);
-    console.log(url);
 
     useEffect(() => {
         // Declare a boolean flag that we can use to cancel the API request.
@@ -21,8 +20,7 @@ const Posts = ({url}) => {
             // If ignoreStaleRequest was set to true, we want to ignore the results of the
             // the request. Otherwise, update the state to trigger a new render.
             if (!ignoreStaleRequest) {
-                console.log(data.posts);
-                setPosts(data.posts);
+                setPosts(data.results);
             }
           })
           .catch((error) => console.error(error));
@@ -34,14 +32,13 @@ const Posts = ({url}) => {
         };
       }, [url]);
 
-      console.log(posts);
 
     return (
         <div>
             {posts.map((post) => (
                 <Post
                 key={post.postid}
-                post={ post }
+                url={ post.url }
                 />
             ))}
         </div>
