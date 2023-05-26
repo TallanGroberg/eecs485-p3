@@ -8,11 +8,11 @@ curl -X POST http://localhost:8000/accounts/login \
     -F operation=login \
     --cookie-jar cookies.txt
 
-# curl -X POST http://localhost:8000/accounts/logout \
-#     -F username=awdeorio \
-#     -F password=password \
-#     -F operation=login \
-#     --cookie-jar cookies.txt
+curl -X POST http://localhost:8000/accounts/logout \
+    -F username=awdeorio \
+    -F password=password \
+    -F operation=login \
+    --cookie-jar cookies.txt
 
 # curl --cookie cookies.txt http://localhost:8000/
 
