@@ -163,12 +163,17 @@ def get_1_post(postid):
     )
     likes = cur3.fetchall()
 
-    # print("likes:       ",likes)
     post[0]['likes'] = {}
     post[0]['likes']['numLikes'] = len(likes)
-    post_likes_this = likes[0]['owner'] == user[0]['username']
-    post[0]['likes']['lognameLikesThis'] = post_likes_this
-    post[0]['likes']['url'] = '/api/v1/likes/' + str(likes[0]['likeid']) + '/'
+    if likes and user:
+        post[0]['likes']['lognameLikesThis'] = likes[0]['owner'] == user[0]['username']
+        if likes:
+            post[0]['likes']['url'] = '/api/v1/likes/' + str(likes[0]['likeid']) + '/'
+        else:
+            post[0]['likes']['url'] = ''  # Set a default value if the likes list is empty
+    else:
+        post[0]['likes']['lognameLikesThis'] = False
+        post[0]['likes']['url'] = None  # Set default values if the lists are empty
 
     # Add database info to context
 
