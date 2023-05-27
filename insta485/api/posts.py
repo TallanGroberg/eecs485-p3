@@ -1,7 +1,6 @@
 """REST API for posts."""
 import flask
 from flask import request, session, jsonify
-# from flask import request, session, jsonify
 import insta485
 
 
@@ -166,14 +165,18 @@ def get_1_post(postid):
     post[0]['likes'] = {}
     post[0]['likes']['numLikes'] = len(likes)
     if likes and user:
-        post[0]['likes']['lognameLikesThis'] = likes[0]['owner'] == user[0]['username']
+        post[0]['likes']['lognameLikesThis'] = (
+            likes[0]['owner'] == user[0]['username']
+            )
         if likes:
-            post[0]['likes']['url'] = '/api/v1/likes/' + str(likes[0]['likeid']) + '/'
+            post[0]['likes']['url'] = (
+                '/api/v1/likes/' + str(likes[0]['likeid']) + '/'
+            )
         else:
-            post[0]['likes']['url'] = ''  # Set a default value if the likes list is empty
+            post[0]['likes']['url'] = None
     else:
         post[0]['likes']['lognameLikesThis'] = False
-        post[0]['likes']['url'] = None  # Set default values if the lists are empty
+        post[0]['likes']['url'] = None
 
     # Add database info to context
 
